@@ -6,19 +6,21 @@ import scala.Some
 object ApplicationBuild extends Build {
 
     val appName         = "io.svc.security.play.demo"
-    val appVersion      = "1.0-SNAPSHOT"
+    val appVersion      = "1.1-SNAPSHOT"
 
     val appDependencies = Seq(
-      "io.svc" %% "io-svc-security-play" % "0.1-SNAPSHOT" changing
+      "io.svc" %% "io-svc-security-play" % "0.2-SNAPSHOT" changing
     )
 
   val repositories =
     Seq("Sonatype OSS Releases" at "http://oss.sonatype.org/content/repositories/releases/",
         "Sonatype OSS Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/")
 
+  val ivyRepositories = Seq(Resolver.url("Local ivy", url("file:///var/lib/jenkins/.ivy2/local/"))(Resolver.ivyStylePatterns))
+
   val main = PlayProject(appName, appVersion, appDependencies, mainLang = SCALA).settings(
 
-    resolvers := repositories,
+    resolvers := repositories ++ ivyRepositories,
 
     credentials += Credentials(Path.userHome / ".m2" / "sonatype.credentials"),
 

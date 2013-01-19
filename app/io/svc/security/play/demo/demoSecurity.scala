@@ -1,6 +1,6 @@
 package io.svc.security.play.demo
 
-import io.svc.security.user.{UsernamePasswordCredentialsAuthenticationService, CredentialsValidator, UserWithUsername}
+import io.svc.security.user.{UserService, UserWithKey, UsernamePasswordCredentialsAuthenticationService, CredentialsValidator}
 import io.svc.security.std._
 import scalaz.{Failure, Success}
 
@@ -9,11 +9,14 @@ import scalaz.{Failure, Success}
  */
 object demoSecurity {
 
-  case class DemoUser(username: String, password: String) extends UserWithUsername[String]
+  case class DemoUser(username: String, password: String) extends UserWithKey[String] {
+    val provideKey = username
+  }
 
   val users = Seq(DemoUser("joe", "password4joe"), DemoUser("jane", "password4jane"))
 
-  val demoUserService = new StdInMemoryUserService[String](users)
+  //TODO get rid of asInstanceOf...
+  val demoUserService = new StdInMemoryUserService[String](users).asInstanceOf[UserService[DemoUser, String, AuthenticationFailure]]
 
   /**
    * In this demo user.password is not encrypted; normally it will be encrypted
